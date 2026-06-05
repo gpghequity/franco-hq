@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Franco HQ — one screen for everything</title>
+<style>
+  :root { --navy:#0b1f3a; --navy2:#10294d; --gold:#c9a44c; --ink:#e8eef7; --mut:#8aa0bf; --ok:#37c184; --bad:#e0556b; --warn:#d8a13a; --line:#1e3a63; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--navy); color:var(--ink); font:15px/1.5 system-ui,Segoe UI,Arial,sans-serif; }
+  header { padding:18px 22px; border-bottom:1px solid #1e3a63; display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; }
+  header h1 { margin:0; font-size:20px; letter-spacing:.3px; }
+  header h1 b { color:var(--gold); }
+  .sub { color:var(--mut); font-size:13px; }
+  .wrap { max-width:980px; margin:0 auto; padding:22px; }
+  .group { margin:0 0 26px; }
+  .group > h2 { font-size:13px; text-transform:uppercase; letter-spacing:1px; color:var(--gold); margin:0 0 10px; border-bottom:1px solid #1e3a63; padding-bottom:6px; }
+  .tile { display:block; background:var(--navy2); border:1px solid #1e3a63; border-radius:12px; padding:14px 16px; margin:0 0 12px; text-decoration:none; color:inherit; transition:border-color .15s; }
+  .tile:hover { border-color:var(--gold); }
+  .tile .top { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .tile .name { font-weight:600; }
+  .dot { width:9px; height:9px; border-radius:50%; display:inline-block; margin-right:7px; vertical-align:middle; }
+  .d-ok{background:var(--ok)} .d-bad{background:var(--bad)} .d-feed{background:#3a5a86}
+  .pills { margin-top:9px; display:flex; flex-wrap:wrap; gap:7px; }
+  .pill { background:#0c2440; border:1px solid #25456f; border-radius:999px; padding:3px 10px; font-size:12.5px; color:var(--ink); }
+  .pill b { color:var(--gold); }
+  .muted { color:var(--mut); font-size:12.5px; margin-top:6px; }
+  .cmd { background:var(--navy2); border:1px solid #1e3a63; border-radius:12px; padding:16px; margin-bottom:26px; }
+  .cmd h2 { margin:0 0 10px; font-size:14px; color:var(--gold); }
+  .cmd textarea { width:100%; min-height:70px; background:#0c2440; color:var(--ink); border:1px solid #25456f; border-radius:8px; padding:10px; font:inherit; resize:vertical; }
+  .cmd .row { display:flex; gap:10px; margin-top:10px; flex-wrap:wrap; }
+  .cmd select { flex:1; min-width:220px; background:#0c2440; color:var(--ink); border:1px solid #25456f; border-radius:8px; padding:9px; font:inherit; }
+  .cmd button { background:var(--gold); color:#1a1300; border:0; border-radius:8px; padding:9px 18px; font-weight:700; cursor:pointer; }
+  .cmd button:active { transform:translateY(1px); }
+  .log { margin-top:12px; }
+  .log .item { border-top:1px solid #1e3a63; padding:8px 0; font-size:13px; }
+  .log .item .t { color:var(--mut); font-size:11.5px; }
+  .log .item .to { color:var(--gold); }
+  footer { color:var(--mut); font-size:12px; text-align:center; padding:18px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Franco <b>HQ</b></h1>
+  <span class="sub">one screen — read everything, send an instruction to anything · <span id="ts">loading…</span></span>
+</header>
+<div class="wrap">
+
+  <div class="cmd">
+    <h2>Give an instruction</h2>
+    <textarea id="cmdtext" placeholder="e.g. 'Pause the storage outreach blast' or 'Approve today's social posts' or 'What's waiting on me?'"></textarea>
+    <div class="row">
+      <select id="cmdtarget"></select>
+      <button id="cmdsend">Send</button>
+    </div>
+    <div class="log" id="cmdlog"></div>
+  </div>
+
+  <div id="board"></div>
+
+</div>
+<footer>Franco HQ · read-only single pane · adds/removes tools by editing one registry file · PwP Capital</footer>
+
+<script>
+const BOARD = document.getElementById('board');
+const TGT = document.getElementById('cmdtarget');
+
+// Render any tool's JSON generically — no per-tool code (that's the anti-drift point).
+function summarize(data) {
+  if (data == null) return [];
+  const out = [];
+  for (const [k, v] of Object.entries(data)) {
+    if (out.length >= 6) break;
+    if (v == null) continue;
+    if (typeof v === 'number' || typeof v === 'boolean') out.push([k, String(v)]);
+    else if (typeof v === 'string' && v.length <= 40) out.push([k, v]);
+    else if (Array.isArray(v)) out.push([k, v.length + ' items']);
+    else if (typeof v === 'object') out.push([k, Object.keys(v).length + ' fields']);
+  }
+  return out;
+}
+
+async function load() {
+  let state;
+  try { state = await (await fetch('/api/state')).json(); }
+  catch (e) { BOARD.innerHTML = '<p class="muted">Could not load state: ' + e.message + '</p>'; return; }
+  document.getElementById('ts').textContent = 'updated ' + new Date(state.generatedAt).toLocaleTimeString();
+
+  // command targets
+  if (!TGT.options.length) {
+    TGT.innerHTML = '<option value="">(no specific tool — hold for Franco)</option>' +
+      state.tools.map(t => '<option value="' + t.key + '">' + t.label + '</option>').join('');
+  }
+
+  BOARD.innerHTML = state.groups.map(g => {
+    const tools = state.tools.filter(t => t.group === g.key);
+    if (!tools.length) return '';
+    return '<div class="group"><h2>' + g.label + '</h2>' + tools.map(tileHtml).join('') + '</div>';
+  }).join('');
+}
+
+function tileHtml(t) {
+  let dot, status, body;
+  if (!t.hasFeed) { dot = 'd-feed'; status = 'link only'; body = '<div class="muted">Live feed not wired yet — click to open its own screen. (Wire its /hq feed to light this up.)</div>'; }
+  else if (t.ok) {
+    dot = 'd-ok'; status = 'live';
+    const rows = summarize(t.data);
+    body = rows.length ? '<div class="pills">' + rows.map(([k, v]) => '<span class="pill">' + k + ': <b>' + v + '</b></span>').join('') + '</div>'
+                       : '<div class="muted">live, no summary fields</div>';
+  } else { dot = 'd-bad'; status = 'down'; body = '<div class="muted">feed error: ' + (t.error || 'unknown') + '</div>'; }
+  return '<a class="tile" href="' + t.url + '" target="_blank" rel="noopener">' +
+    '<div class="top"><span class="name"><span class="dot ' + dot + '"></span>' + t.label + '</span>' +
+    '<span class="muted">' + status + ' ↗</span></div>' + body + '</a>';
+}
+
+document.getElementById('cmdsend').onclick = async () => {
+  const text = document.getElementById('cmdtext').value.trim();
+  if (!text) return;
+  const target = TGT.value;
+  await fetch('/api/command', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ target, text }) });
+  document.getElementById('cmdtext').value = '';
+  loadLog();
+};
+
+async function loadLog() {
+  try {
+    const { commands } = await (await fetch('/api/commands')).json();
+    document.getElementById('cmdlog').innerHTML = (commands || []).slice(0, 6).map(c =>
+      '<div class="item"><span class="t">' + new Date(c.ts).toLocaleString() + '</span> → <span class="to">' +
+      (c.targetLabel || c.target) + '</span>' + (c.forwarded ? ' ✓ sent' : '') + '<br>' +
+      c.text.replace(/</g, '&lt;') + '</div>').join('');
+  } catch (e) { /* ignore */ }
+}
+
+load(); loadLog();
+setInterval(load, 30000);
+</script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "_comment": "SINGLE SOURCE OF TRUTH for Franco HQ. This is the ONLY place tools are listed. Franco HQ has NO tool-specific code — it just reads this file. Add/change/remove a tool here and nowhere else. A tool shows LIVE data only if it has a statusUrl returning JSON; otherwise it shows as link-only until its /hq contract is wired. commandUrl = where a typed instruction gets POSTed (null = captured + queued for Franco until wired).",
+  "groups": [
+    { "key": "comms",   "label": "Inbound / Comms (the director)" },
+    { "key": "outbound","label": "Outbound / Marketing" },
+    { "key": "money",   "label": "Money / Return-on-Effort" },
+    { "key": "intake",  "label": "Intake" },
+    { "key": "team",    "label": "Team" }
+  ],
+  "tools": [
+    { "key": "franco",        "label": "Franco Command (email/Slack/SMS/GHL director)", "group": "comms",    "url": "https://franco-command-v2-production.up.railway.app/digest/latest", "statusUrl": "https://franco-command-v2-production.up.railway.app/franco/status", "commandUrl": null },
+    { "key": "social",        "label": "Social Command (posts: draft/approve/posted)",  "group": "outbound", "url": "https://rei-social-campaign-production.up.railway.app",            "statusUrl": "https://rei-social-campaign-production.up.railway.app/api/status-summary", "commandUrl": null },
+    { "key": "marketing",     "label": "Marketing Command (owner outreach + intakes)",  "group": "outbound", "url": "https://marketing-command-production.up.railway.app/admin-dashboard", "statusUrl": null, "commandUrl": null },
+    { "key": "marketing_roi", "label": "Marketing ROI (visits→leads→closed by source)", "group": "money",    "url": "https://rei-marketing-roi-production.up.railway.app",             "statusUrl": null, "commandUrl": null },
+    { "key": "lead_source",   "label": "Lead Source Tracker (UTM beacons)",             "group": "money",    "url": "https://rei-lead-source-tracker-production.up.railway.app/admin",  "statusUrl": null, "commandUrl": null },
+    { "key": "lender",        "label": "Lender Command (lending inquiries)",            "group": "intake",   "url": "https://lender-command-production.up.railway.app/broker",          "statusUrl": null, "commandUrl": null },
+    { "key": "leaderboard",   "label": "Team Leaderboard (per-member scorecard)",       "group": "team",     "url": "https://rei-team-leaderboard-production.up.railway.app",           "statusUrl": null, "commandUrl": null }
+  ]
+}
