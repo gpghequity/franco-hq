@@ -8,7 +8,7 @@
     { "key": "team",    "label": "Team" }
   ],
   "tools": [
-    { "key": "franco",        "label": "Franco Command (email/Slack/SMS/GHL director)", "group": "comms",    "url": "https://franco-command-v2-production.up.railway.app/digest/latest", "statusUrl": "https://franco-command-v2-production.up.railway.app/franco/status", "commandUrl": null },
+    { "key": "franco",        "label": "Franco Command (email/Slack/SMS/GHL director)", "group": "comms",    "url": "https://franco-command-v2-production.up.railway.app/digest/latest", "statusUrl": "https://franco-command-v2-production.up.railway.app/healthz", "commandUrl": null },
     { "key": "social",        "label": "Social Command (posts: draft/approve/posted)",  "group": "outbound", "url": "https://rei-social-campaign-production.up.railway.app",            "statusUrl": "https://rei-social-campaign-production.up.railway.app/api/status-summary", "commandUrl": null },
     { "key": "marketing",     "label": "Marketing Command (owner outreach + intakes)",  "group": "outbound", "url": "https://marketing-command-production.up.railway.app/admin-dashboard", "statusUrl": null, "commandUrl": null },
     { "key": "marketing_roi", "label": "Marketing ROI (visits→leads→closed by source)", "group": "money",    "url": "https://rei-marketing-roi-production.up.railway.app",             "statusUrl": null, "commandUrl": null },
