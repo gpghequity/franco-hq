@@ -15,8 +15,13 @@
   .wrap { max-width:980px; margin:0 auto; padding:22px; }
   .group { margin:0 0 26px; }
   .group > h2 { font-size:13px; text-transform:uppercase; letter-spacing:1px; color:var(--gold); margin:0 0 10px; border-bottom:1px solid #1e3a63; padding-bottom:6px; }
-  .tile { display:block; background:var(--navy2); border:1px solid #1e3a63; border-radius:12px; padding:14px 16px; margin:0 0 12px; text-decoration:none; color:inherit; transition:border-color .15s; }
+  .tile { background:var(--navy2); border:1px solid #1e3a63; border-radius:12px; margin:0 0 12px; transition:border-color .15s; overflow:hidden; }
   .tile:hover { border-color:var(--gold); }
+  .tilelink { display:block; padding:14px 16px; text-decoration:none; color:inherit; }
+  .acts { display:flex; gap:8px; padding:0 16px 13px; flex-wrap:wrap; }
+  .act { background:transparent; border:1px solid var(--gold); color:var(--gold); border-radius:8px; padding:6px 12px; font:inherit; font-size:12.5px; cursor:pointer; }
+  .act:hover { background:var(--gold); color:#1a1300; }
+  .act:disabled { opacity:.5; cursor:default; }
   .tile .top { display:flex; align-items:center; justify-content:space-between; gap:10px; }
   .tile .name { font-weight:600; }
   .dot { width:9px; height:9px; border-radius:50%; display:inline-block; margin-right:7px; vertical-align:middle; }
@@ -108,9 +113,14 @@ function tileHtml(t) {
     body = rows.length ? '<div class="pills">' + rows.map(([k, v]) => '<span class="pill">' + k + ': <b>' + v + '</b></span>').join('') + '</div>'
                        : '<div class="muted">live, no summary fields</div>';
   } else { dot = 'd-bad'; status = 'down'; body = '<div class="muted">feed error: ' + (t.error || 'unknown') + '</div>'; }
-  return '<a class="tile" href="' + t.url + '" target="_blank" rel="noopener">' +
+  // Real action buttons (the "do", not "report") — rendered from the registry.
+  const acts = (t.actions || []).map(a =>
+    '<button class="act" data-tool="' + t.key + '" data-action="' + a.key + '">' + a.label + '</button>').join('');
+  const actBar = acts ? '<div class="acts" onclick="event.stopPropagation()">' + acts + '</div>' : '';
+  return '<div class="tile">' +
+    '<a class="tilelink" href="' + t.url + '" target="_blank" rel="noopener">' +
     '<div class="top"><span class="name"><span class="dot ' + dot + '"></span>' + t.label + '</span>' +
-    '<span class="muted">' + status + ' ↗</span></div>' + body + '</a>';
+    '<span class="muted">' + status + ' ↗</span></div>' + body + '</a>' + actBar + '</div>';
 }
 
 document.getElementById('cmdsend').onclick = async () => {
@@ -131,6 +141,21 @@ async function loadLog() {
       c.text.replace(/</g, '&lt;') + '</div>').join('');
   } catch (e) { /* ignore */ }
 }
+
+// Action buttons = real execution on the target tool.
+BOARD.addEventListener('click', async (e) => {
+  const b = e.target.closest('.act'); if (!b) return;
+  e.preventDefault();
+  if (!confirm(b.textContent + ' — run this now?')) return;
+  b.disabled = true; const was = b.textContent; b.textContent = 'running…';
+  try {
+    const r = await fetch('/api/command', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ target: b.dataset.tool, action: b.dataset.action }) });
+    const out = await r.json();
+    b.textContent = (out.ok && out.entry && out.entry.forwarded) ? 'done ✓' : 'failed';
+  } catch { b.textContent = 'failed'; }
+  await loadLog();
+  setTimeout(() => { load(); }, 1200);
+});
 
 load(); loadLog();
 setInterval(load, 30000);

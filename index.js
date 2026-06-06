@@ -32,7 +32,7 @@ try {
 
 // ── poll one tool's status feed (best-effort, never throws) ─────────────────
 async function pollTool(tool) {
-  const base = { key: tool.key, label: tool.label, group: tool.group, url: tool.url, commandable: !!tool.commandUrl };
+  const base = { key: tool.key, label: tool.label, group: tool.group, url: tool.url, commandable: !!tool.commandUrl, actions: tool.actions || [] };
   if (!tool.statusUrl) return { ...base, hasFeed: false };
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), 5000);
@@ -57,23 +57,28 @@ async function getState() {
 async function handleCommand(body) {
   const target = String(body.target || '').trim();
   const text = String(body.text || '').trim();
-  if (!text) return { ok: false, error: 'empty instruction' };
+  const action = String(body.action || '').trim();   // a real action to execute, vs freeform text
+  if (!text && !action) return { ok: false, error: 'empty instruction' };
   const tool = REGISTRY.tools.find(t => t.key === target) || null;
   const entry = {
     ts: new Date().toISOString(),
     target: tool ? tool.key : (target || 'unrouted'),
     targetLabel: tool ? tool.label : '(no target — held for Franco)',
-    text,
+    text: text || ('[action] ' + action),
+    action: action || undefined,
     forwarded: false
   };
-  if (tool && tool.commandUrl) {
+  // An action with a commandUrl gets EXECUTED on the tool (this is the "do", not "report").
+  if (tool && tool.commandUrl && action) {
     try {
       const r = await fetch(tool.commandUrl, {
         method: 'POST', headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ source: 'franco-hq', text })
+        body: JSON.stringify({ source: 'franco-hq', action, text })
       });
-      entry.forwarded = r.ok;
-      if (!r.ok) entry.forwardError = 'HTTP ' + r.status;
+      const out = await r.json().catch(() => ({}));
+      entry.forwarded = r.ok && out.ok !== false;
+      entry.result = out;
+      if (!entry.forwarded) entry.forwardError = out.error || ('HTTP ' + r.status);
     } catch (e) { entry.forwardError = e.message; }
   }
   try { fs.appendFileSync(CMD_LOG, JSON.stringify(entry) + '\n'); } catch (e) { /* non-fatal */ }
