@@ -1,6 +1,6 @@
 {
   "name": "franco-hq",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Franco HQ — single read-only pane of glass over every marketing/comms tool. Zero deps, registry-driven, cannot drift.",
   "main": "index.js",
