@@ -18,8 +18,17 @@ const path = require('path');
 
 const PORT = process.env.PORT || 8088;
 const ROOT = __dirname;
-const REGISTRY = JSON.parse(fs.readFileSync(path.join(ROOT, 'registry.json'), 'utf8'));
 const CMD_LOG = path.join(ROOT, 'commands.jsonl');
+
+// Load registry from disk on each request for hot-reload (no restart needed when registry.json changes)
+function loadRegistry() {
+  try {
+    return JSON.parse(fs.readFileSync(path.join(ROOT, 'registry.json'), 'utf8'));
+  } catch (e) {
+    console.error('[franco-hq] Failed to load registry:', e.message);
+    return { groups: [], tools: [] };
+  }
+}
 
 // ── recent commands (in-memory, restored from disk) ─────────────────────────
 let RECENT = [];
@@ -49,12 +58,14 @@ async function pollTool(tool) {
 }
 
 async function getState() {
+  const REGISTRY = loadRegistry();
   const tools = await Promise.all(REGISTRY.tools.map(pollTool));
   return { generatedAt: new Date().toISOString(), groups: REGISTRY.groups, tools };
 }
 
 // ── capture a typed instruction; forward if the tool accepts commands ───────
 async function handleCommand(body) {
+  const REGISTRY = loadRegistry();
   const target = String(body.target || '').trim();
   const text = String(body.text || '').trim();
   const action = String(body.action || '').trim();   // a real action to execute, vs freeform text
@@ -109,6 +120,7 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`[franco-hq] listening on :${PORT} — single pane over ${REGISTRY.tools.length} tools`);
-  console.log(`[franco-hq] loaded tools: ${REGISTRY.tools.map(t => t.key).join(', ')}`);
+  const reg = loadRegistry();
+  console.log(`[franco-hq] listening on :${PORT} — single pane over ${reg.tools.length} tools (registry dynamically loaded)`);
+  console.log(`[franco-hq] loaded tools: ${reg.tools.map(t => t.key).join(', ')}`);
 });
