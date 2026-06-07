@@ -9,6 +9,7 @@
     { "key": "quality", "label": "Quality / Audits" }
   ],
   "tools": [
+    { "key": "instructions", "label": "📖 INSTRUCTIONS (Read First)", "group": "comms", "url": "https://instructions.vercel.app", "statusUrl": "https://instructions.vercel.app", "commandUrl": null, "actions": [] },
     { "key": "master-control", "label": "🎛️ MASTER CONTROL CENTER (All Platforms)", "group": "comms", "url": "https://control-center-master.vercel.app", "statusUrl": "https://control-center-master.vercel.app", "commandUrl": null, "actions": [] },
     { "key": "critical-apps", "label": "⭐ 12 Critical Apps (Master Dashboard)", "group": "comms", "url": "https://critical-apps.vercel.app", "statusUrl": "https://critical-apps.vercel.app", "commandUrl": null, "actions": [] },
     { "key": "franco",        "label": "Franco Command (email/Slack/SMS/GHL director)", "group": "comms",    "url": "https://franco-command-v2-production.up.railway.app/digest/latest", "statusUrl": "https://franco-command-v2-production.up.railway.app/healthz", "commandUrl": null, "actions": [] },
