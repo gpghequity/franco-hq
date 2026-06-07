@@ -108,4 +108,7 @@ const server = http.createServer(async (req, res) => {
   } catch (e) { return json(res, 500, { ok: false, error: e.message }); }
 });
 
-server.listen(PORT, () => console.log(`[franco-hq] listening on :${PORT} — single pane over ${REGISTRY.tools.length} tools`));
+server.listen(PORT, () => {
+  console.log(`[franco-hq] listening on :${PORT} — single pane over ${REGISTRY.tools.length} tools`);
+  console.log(`[franco-hq] loaded tools: ${REGISTRY.tools.map(t => t.key).join(', ')}`);
+});
