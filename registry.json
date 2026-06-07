@@ -9,6 +9,7 @@
     { "key": "quality", "label": "Quality / Audits" }
   ],
   "tools": [
+    { "key": "critical-apps", "label": "⭐ 12 Critical Apps (Master Dashboard)", "group": "comms", "url": "https://critical-apps.vercel.app", "statusUrl": "https://critical-apps.vercel.app", "commandUrl": null, "actions": [] },
     { "key": "franco",        "label": "Franco Command (email/Slack/SMS/GHL director)", "group": "comms",    "url": "https://franco-command-v2-production.up.railway.app/digest/latest", "statusUrl": "https://franco-command-v2-production.up.railway.app/healthz", "commandUrl": null, "actions": [] },
     { "key": "social",        "label": "Social Command (posts: draft/approve/posted)",  "group": "outbound", "url": "https://rei-social-campaign-production.up.railway.app",            "statusUrl": "https://rei-social-campaign-production.up.railway.app/api/hq", "commandUrl": "https://rei-social-campaign-production.up.railway.app/api/hq/command", "actions": [ { "key": "approve_all_drafts", "label": "Approve all drafts" } ] },
     { "key": "marketing",     "label": "Marketing Command (owner outreach + intakes)",  "group": "outbound", "url": "https://marketing-command-production-c0b8.up.railway.app/admin-dashboard", "statusUrl": "https://marketing-command-production-c0b8.up.railway.app/api/hq", "commandUrl": null, "actions": [] },
