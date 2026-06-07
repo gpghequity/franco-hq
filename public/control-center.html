@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gorilla Platform — Master Control Center</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #0f172a 0%, #1a1a2e 100%); color: #e2e8f0; padding: 2rem; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .header { text-align: center; margin-bottom: 2rem; }
+    .header h1 { font-size: 3rem; color: #fbbf24; margin-bottom: 0.5rem; }
+    .header p { color: #94a3b8; font-size: 1.1rem; }
+    .platform-notice { background: #1e3a63; border: 2px solid #fbbf24; padding: 1rem; border-radius: 6px; margin-bottom: 2rem; text-align: center; color: #fbbf24; font-weight: 600; }
+    .section { margin-bottom: 3rem; }
+    .section-title { font-size: 1.5rem; color: #fbbf24; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid #fbbf24; }
+    .platforms { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+    .platform-box { background: #1e293b; border: 2px solid #334155; border-radius: 8px; padding: 1.5rem; }
+    .platform-box h3 { color: #fbbf24; margin-bottom: 1rem; font-size: 1.2rem; }
+    .url-group { margin-bottom: 1rem; }
+    .url-label { font-size: 0.85rem; color: #94a3b8; text-transform: uppercase; margin-bottom: 0.3rem; }
+    .url-link { display: inline-block; background: #0f172a; color: #fbbf24; padding: 0.6rem 1rem; border-radius: 4px; text-decoration: none; font-family: monospace; font-size: 0.9rem; transition: all 0.2s; border: 1px solid #334155; }
+    .url-link:hover { background: #1a2332; border-color: #fbbf24; }
+    .app-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; }
+    .app-item { background: #1e293b; border: 1px solid #334155; border-radius: 6px; padding: 1rem; }
+    .app-item h4 { color: #fbbf24; margin-bottom: 0.5rem; }
+    .app-urls { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .app-url { font-size: 0.75rem; padding: 0.3rem 0.6rem; border-radius: 3px; background: #0f172a; color: #94a3b8; text-decoration: none; border: 1px solid #334155; transition: all 0.2s; }
+    .app-url:hover { color: #fbbf24; border-color: #fbbf24; }
+    .app-url.vercel { color: #00d4ff; border-color: #00d4ff; }
+    .app-url.railway { color: #0b0e11; background: #fbbf24; }
+    .info-box { background: #1e3a63; border-left: 4px solid #fbbf24; padding: 1rem; border-radius: 4px; margin-bottom: 2rem; }
+    .footer { text-align: center; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #334155; color: #64748b; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🦍 Gorilla Platform</h1>
+      <p>Master Control Center — All Launchers, All Platforms</p>
+    </div>
+
+    <div class="platform-notice" id="platform-notice">
+      ⚡ You're on: [PLATFORM]
+    </div>
+
+    <div class="info-box">
+      <strong>🔄 Redundant Architecture:</strong> All key launchers run on BOTH Vercel (backup) and Railway (primary). If one goes down, use the other. All links below work on both platforms.
+    </div>
+
+    <!-- KEY LAUNCHERS SECTION -->
+    <div class="section">
+      <div class="section-title">🚀 Key Launchers (Master Control)</div>
+      <div class="platforms">
+        <div class="platform-box">
+          <h3>🌐 Vercel Versions (Backup)</h3>
+          <div class="url-group">
+            <div class="url-label">REI Launcher</div>
+            <a href="https://rei-launcher-safe.vercel.app" class="url-link">↗ rei-launcher-safe.vercel.app</a>
+          </div>
+          <div class="url-group">
+            <div class="url-label">Franco HQ</div>
+            <a href="https://franco-hq-safe.vercel.app" class="url-link">↗ franco-hq-safe.vercel.app</a>
+          </div>
+          <div class="url-group">
+            <div class="url-label">Critical Apps</div>
+            <a href="https://critical-apps.vercel.app" class="url-link">↗ critical-apps.vercel.app</a>
+          </div>
+        </div>
+
+        <div class="platform-box">
+          <h3>🚂 Railway Versions (Primary)</h3>
+          <div class="url-group">
+            <div class="url-label">REI Launcher</div>
+            <a href="https://rei-launcher-production.up.railway.app" class="url-link">↗ rei-launcher-production.up.railway.app</a>
+          </div>
+          <div class="url-group">
+            <div class="url-label">Franco HQ</div>
+            <a href="https://franco-hq-production.up.railway.app" class="url-link">↗ franco-hq-production.up.railway.app</a>
+          </div>
+          <div class="url-group">
+            <div class="url-label">Critical Apps</div>
+            <a href="https://rei-launcher-production.up.railway.app/critical-apps.html" class="url-link">↗ rei-launcher/critical-apps.html</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 12 CRITICAL APPS SECTION -->
+    <div class="section">
+      <div class="section-title">⭐ 12 Critical Apps (Both Platforms)</div>
+      <div class="app-grid">
+        <div class="app-item">
+          <h4>1. Franco Command</h4>
+          <p style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 0.5rem;">Email/Pipeline/Brief</p>
+          <div class="app-urls">
+            <a href="https://franco-command-v2-production.up.railway.app" class="app-url railway">🚂 Railway</a>
+          </div>
+        </div>
+        <div class="app-item">
+          <h4>2. Social Campaign</h4>
+          <p style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 0.5rem;">Posts/Broadcasts</p>
+          <div class="app-urls">
+            <a href="https://rei-social-campaign-production.up.railway.app" class="app-url railway">🚂 Railway</a>
+          </div>
+        </div>
+        <div class="app-item">
+          <h4>3. Fast Calc</h4>
+          <p style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 0.5rem;">Deal Analyzer</p>
+          <div class="app-urls">
+            <a href="https://rei-fast-calc-production.up.railway.app" class="app-url railway">🚂 Railway</a>
+          </div>
+        </div>
+        <div class="app-item">
+          <h4>4. Baby Analyzer</h4>
+          <p style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 0.5rem;">Rental Analysis</p>
+          <div class="app-urls">
+            <a href="https://rei-baby-analyzer-production.up.railway.app" class="app-url railway">🚂 Railway</a>
+          </div>
+        </div>
+        <div class="app-item">
+          <h4>5. Closing Pipeline</h4>
+          <p style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 0.5rem;">Kanban Tracker</p>
+          <div class="app-urls">
+            <a href="https://rei-closing-pipeline-production.up.railway.app" class="app-url railway">🚂 Railway</a>
+          </div>
+        </div>
+        <div class="app-item">
+          <h4>6. Deal Intake</h4>
+          <p style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 0.5rem;">Seller Form</p>
+          <div class="app-urls">
+            <a href="https://rei-deal-intake-production.up.railway.app" class="app-url railway">🚂 Railway</a>
+          </div>
+        </div>
+        <div class="app-item">
+          <h4>7. Auto-Offer</h4>
+          <p style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 0.5rem;">Instant Quotes</p>
+          <div class="app-urls">
+            <a href="https://rei-auto-offer-production.up.railway.app/v2" class="app-url railway">🚂 Railway</a>
+          </div>
+        </div>
+        <div class="app-item">
+          <h4>8. Team Leaderboard</h4>
+          <p style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 0.5rem;">Performance</p>
+          <div class="app-urls">
+            <a href="https://rei-team-leaderboard-production.up.railway.app" class="app-url railway">🚂 Railway</a>
+          </div>
+        </div>
+        <div class="app-item">
+          <h4>9. Paul Isabella</h4>
+          <p style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 0.5rem;">Thinking Partner</p>
+          <div class="app-urls">
+            <a href="https://paul-isabella-personal-production.up.railway.app" class="app-url railway">🚂 Railway</a>
+          </div>
+        </div>
+        <div class="app-item">
+          <h4>10. Marketing Command</h4>
+          <p style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 0.5rem;">Outreach</p>
+          <div class="app-urls">
+            <a href="https://marketing-command-production-c0b8.up.railway.app" class="app-url railway">🚂 Railway</a>
+          </div>
+        </div>
+        <div class="app-item">
+          <h4>11. Risk Intelligence</h4>
+          <p style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 0.5rem;">Risk Scoring</p>
+          <div class="app-urls">
+            <a href="https://rei-risk-intelligence-production.up.railway.app" class="app-url railway">🚂 Railway</a>
+          </div>
+        </div>
+        <div class="app-item">
+          <h4>12. Lender Command</h4>
+          <p style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 0.5rem;">Lending Intake</p>
+          <div class="app-urls">
+            <a href="https://lender-command-production.up.railway.app/broker" class="app-url railway">🚂 Railway</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUICK REFERENCE -->
+    <div class="section">
+      <div class="section-title">🎯 Quick Reference</div>
+      <div class="platforms">
+        <div class="platform-box">
+          <h3>When Vercel is Down</h3>
+          <p style="color: #cbd5e1; margin-bottom: 1rem;">Use Railway versions. All apps link to Railway primary servers.</p>
+          <a href="https://rei-launcher-production.up.railway.app" class="url-link" style="display: block;">→ Go to REI Launcher (Railway)</a>
+        </div>
+        <div class="platform-box">
+          <h3>When Railway is Down</h3>
+          <p style="color: #cbd5e1; margin-bottom: 1rem;">Use Vercel launchers. They redirect to same tools when Railway is back.</p>
+          <a href="https://rei-launcher-safe.vercel.app" class="url-link" style="display: block;">→ Go to REI Launcher (Vercel)</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>🔄 Gorilla Platform — Redundant Architecture</p>
+      <p>All key launchers on Vercel (backup) + Railway (primary). Zero single points of failure.</p>
+    </div>
+  </div>
+
+  <script>
+    // Detect which platform we're on
+    const url = window.location.hostname;
+    const notice = document.getElementById('platform-notice');
+    if (url.includes('vercel')) {
+      notice.innerHTML = '✅ You\'re on <strong>Vercel</strong> (Backup). Railway versions are also available below.';
+      notice.style.background = '#1e3a63';
+    } else if (url.includes('railway')) {
+      notice.innerHTML = '✅ You\'re on <strong>Railway</strong> (Primary). Vercel backups are available below.';
+      notice.style.background = '#1a2332';
+    }
+  </script>
+</body>
+</html>
