@@ -109,15 +109,19 @@ function tileHtml(t) {
   if (!t.hasFeed) { dot = 'd-feed'; status = 'link only'; body = '<div class="muted">Live feed not wired yet — click to open its own screen. (Wire its /hq feed to light this up.)</div>'; }
   else if (t.ok) {
     dot = 'd-ok'; status = 'live';
-    // Special case: Franco Command shows email metrics + alerts
+    // Special case: Franco Command shows email metrics + alerts + performance
     if (t.key === 'franco-command' && t.data && t.data.unprocessedEmails != null) {
       const emails = t.data.unprocessedEmails || 0;
       const lastPoll = t.data.lastEmailPollTime ? new Date(t.data.lastEmailPollTime).toLocaleTimeString() : 'never';
       let pills = '<div class="pills">' +
         '<span class="pill">📧 unprocessed: <b>' + emails + '</b></span>' +
         '<span class="pill">last poll: <b>' + lastPoll + '</b></span>' +
-        '<span class="pill">queue depth: <b>' + (t.data.briefQueueDepth || 0) + '</b></span>' +
-        '</div>';
+        '<span class="pill">queue depth: <b>' + (t.data.briefQueueDepth || 0) + '</b></span>';
+      // Add metrics if available
+      if (t.data.metrics && t.data.metrics.length > 0) {
+        pills += t.data.metrics.map(m => '<span class="pill">' + m.name + ': <b>' + m.value + '</b></span>').join('');
+      }
+      pills += '</div>';
       // Add recent alerts if any
       if (t.data.recentAlerts && t.data.recentAlerts.length > 0) {
         const colors = { 'error': '#e0556b', 'warn': '#d8a13a' };
