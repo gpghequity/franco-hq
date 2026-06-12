@@ -109,15 +109,26 @@ function tileHtml(t) {
   if (!t.hasFeed) { dot = 'd-feed'; status = 'link only'; body = '<div class="muted">Live feed not wired yet — click to open its own screen. (Wire its /hq feed to light this up.)</div>'; }
   else if (t.ok) {
     dot = 'd-ok'; status = 'live';
-    // Special case: Franco Command shows email metrics
+    // Special case: Franco Command shows email metrics + alerts
     if (t.key === 'franco-command' && t.data && t.data.unprocessedEmails != null) {
       const emails = t.data.unprocessedEmails || 0;
       const lastPoll = t.data.lastEmailPollTime ? new Date(t.data.lastEmailPollTime).toLocaleTimeString() : 'never';
-      body = '<div class="pills">' +
+      let pills = '<div class="pills">' +
         '<span class="pill">📧 unprocessed: <b>' + emails + '</b></span>' +
         '<span class="pill">last poll: <b>' + lastPoll + '</b></span>' +
         '<span class="pill">queue depth: <b>' + (t.data.briefQueueDepth || 0) + '</b></span>' +
         '</div>';
+      // Add recent alerts if any
+      if (t.data.recentAlerts && t.data.recentAlerts.length > 0) {
+        const colors = { 'error': '#e0556b', 'warn': '#d8a13a' };
+        pills += '<div style="margin-top:8px; border-top:1px solid #1e3a63; padding-top:8px;">' +
+          t.data.recentAlerts.map(a =>
+            '<div style="font-size:12px; color:' + (colors[a.level] || '#999') + '; margin-bottom:3px;"><b>' +
+            a.level.toUpperCase() + ':</b> ' + a.message.slice(0, 50) + '</div>'
+          ).join('') +
+          '</div>';
+      }
+      body = pills;
     } else {
       const rows = summarize(t.data);
       body = rows.length ? '<div class="pills">' + rows.map(([k, v]) => '<span class="pill">' + k + ': <b>' + v + '</b></span>').join('') + '</div>'
