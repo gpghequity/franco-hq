@@ -109,9 +109,20 @@ function tileHtml(t) {
   if (!t.hasFeed) { dot = 'd-feed'; status = 'link only'; body = '<div class="muted">Live feed not wired yet — click to open its own screen. (Wire its /hq feed to light this up.)</div>'; }
   else if (t.ok) {
     dot = 'd-ok'; status = 'live';
-    const rows = summarize(t.data);
-    body = rows.length ? '<div class="pills">' + rows.map(([k, v]) => '<span class="pill">' + k + ': <b>' + v + '</b></span>').join('') + '</div>'
-                       : '<div class="muted">live, no summary fields</div>';
+    // Special case: Franco Command shows email metrics
+    if (t.key === 'franco-command' && t.data && t.data.unprocessedEmails != null) {
+      const emails = t.data.unprocessedEmails || 0;
+      const lastPoll = t.data.lastEmailPollTime ? new Date(t.data.lastEmailPollTime).toLocaleTimeString() : 'never';
+      body = '<div class="pills">' +
+        '<span class="pill">📧 unprocessed: <b>' + emails + '</b></span>' +
+        '<span class="pill">last poll: <b>' + lastPoll + '</b></span>' +
+        '<span class="pill">queue depth: <b>' + (t.data.briefQueueDepth || 0) + '</b></span>' +
+        '</div>';
+    } else {
+      const rows = summarize(t.data);
+      body = rows.length ? '<div class="pills">' + rows.map(([k, v]) => '<span class="pill">' + k + ': <b>' + v + '</b></span>').join('') + '</div>'
+                         : '<div class="muted">live, no summary fields</div>';
+    }
   } else { dot = 'd-bad'; status = 'down'; body = '<div class="muted">feed error: ' + (t.error || 'unknown') + '</div>'; }
   // Real action buttons (the "do", not "report") — rendered from the registry.
   const acts = (t.actions || []).map(a =>
